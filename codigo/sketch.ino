@@ -18,6 +18,28 @@ DHTesp dht;
 #define GREEN 26
 #define BLUE 27
 
+void apagarLED() {
+  digitalWrite(RED, LOW);
+  digitalWrite(GREEN, LOW);
+  digitalWrite(BLUE, LOW);
+}
+
+void acenderVerde() {
+  apagarLED();
+  digitalWrite(GREEN, HIGH);
+}
+
+void acenderAmarelo() {
+  apagarLED();
+  digitalWrite(RED, HIGH);
+  digitalWrite(GREEN, HIGH);
+}
+
+void acenderVermelho() {
+  apagarLED();
+  digitalWrite(RED, HIGH);
+}
+
 void setup() {
 
   Serial.begin(115200);
@@ -25,6 +47,8 @@ void setup() {
   pinMode(RED, OUTPUT);
   pinMode(GREEN, OUTPUT);
   pinMode(BLUE, OUTPUT);
+
+  apagarLED();
 
   dht.setup(DHTPIN, DHTesp::DHT22);
 
@@ -52,6 +76,7 @@ void reconnect() {
 
     } else {
 
+      Serial.println("Falha MQTT. Tentando novamente...");
       delay(2000);
     }
   }
@@ -71,7 +96,6 @@ void loop() {
   float umidade = data.humidity;
 
   int co2 = random(400, 1200);
-
   int pm25 = random(10, 100);
 
   client.publish("amanda/temperatura", String(temperatura).c_str());
@@ -79,26 +103,44 @@ void loop() {
   client.publish("amanda/co2", String(co2).c_str());
   client.publish("amanda/pm25", String(pm25).c_str());
 
-  Serial.println("Dados enviados MQTT");
+  Serial.println("================================");
+
+  Serial.print("Temperatura: ");
+  Serial.println(temperatura);
+
+  Serial.print("Umidade: ");
+  Serial.println(umidade);
+
+  Serial.print("CO2: ");
+  Serial.println(co2);
+
+  Serial.print("PM2.5: ");
+  Serial.println(pm25);
 
   if (co2 < 700) {
 
-    digitalWrite(GREEN, HIGH);
-    digitalWrite(RED, LOW);
-    digitalWrite(BLUE, LOW);
+    Serial.println("Qualidade do ar: BOA");
+    Serial.println("LED VERDE");
+
+    acenderVerde();
 
   } else if (co2 < 1000) {
 
-    digitalWrite(GREEN, HIGH);
-    digitalWrite(RED, HIGH);
-    digitalWrite(BLUE, LOW);
+    Serial.println("Qualidade do ar: MODERADA");
+    Serial.println("LED AMARELO");
+
+    acenderAmarelo();
 
   } else {
 
-    digitalWrite(GREEN, LOW);
-    digitalWrite(RED, HIGH);
-    digitalWrite(BLUE, LOW);
+    Serial.println("Qualidade do ar: RUIM");
+    Serial.println("LED VERMELHO");
+
+    acenderVermelho();
   }
+
+  Serial.println("Dados enviados MQTT");
+  Serial.println("================================");
 
   delay(5000);
 }
