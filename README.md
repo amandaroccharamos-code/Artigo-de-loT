@@ -1,4 +1,4 @@
-# Sistema de Monitoramento Ambiental com IoT e MQTT
+# Sistema de Monitoramento Ambiental com IoT e MQTT 
 
 Este projeto apresenta um sistema de monitoramento ambiental utilizando Internet das Coisas (IoT), desenvolvido com ESP32, sensor DHT22, LED RGB e protocolo MQTT.
 
